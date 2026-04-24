@@ -3,12 +3,21 @@ name = "docuview"
 version = "0.1.0"
 description = "Document parser service"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "pydantic>=2.7",
+    "pydantic-settings>=2.3",
     "sqlalchemy>=2.0",
     "psycopg[binary]>=3.2",
     "alembic>=1.13",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "python-dotenv>=1.0",
+    "honcho>=1.1",
+    "ruff>=0.4",
+    "black>=24.4",
+    "pytest-cov>=5.0",
+    "pyyaml>=6.0.3",
 ]
 
 [project.optional-dependencies]
@@ -60,4 +69,19 @@ python_version = "3.12"
 strict = false
 warn_return_any = true
 warn_unused_ignores = true
+# НЕ используем глобальный ignore_missing_imports — он конфликтует с
+# warn_unused_ignores: mypy подавляет импорт-ошибку, потом видит
+# оставшийся # type: ignore как лишний и снова падает.
+# types-PyYAML установлен в dependency-groups.dev, поэтому yaml
+# покрыт стабами. Отключаем import-untyped глобально для остальных
+# пакетов без py.typed (magic, и др.).
+disable_error_code = ["import-untyped"]
+
+[[tool.mypy.overrides]]
+module = ["magic"]
 ignore_missing_imports = true
+
+[dependency-groups]
+dev = [
+    "types-pyyaml>=6.0.12.20260408",
+]
